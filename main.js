@@ -1,12 +1,9 @@
-// Required Dependencies
-// Install these packages using npm:
-// npm install xlsx docxtemplater pizzip fs
 
-const fs = require('fs');
-const path = require('path');
-const XLSX = require('xlsx');
-const PizZip = require('pizzip');
-const Docxtemplater = require('docxtemplater');
+import { readFileSync, ensureDirSync, writeFileSync } from "https://deno.land/std@0.120.0/fs/mod.ts";
+import { dirname, resolve } from "https://deno.land/std@0.120.0/path/mod.ts";
+import * as XLSX from "https://deno.land/x/sheetjs/xlsx.mjs";
+import PizZip from "https://deno.land/x/docxtemplater@3.26.0/mod.ts";
+import Docxtemplater from "https://deno.land/x/docxtemplater@3.26.0/lib/docxtemplater.js";
 
 // Function to read the Excel file and extract data
 function readExcel(filePath) {
@@ -39,7 +36,7 @@ function readExcel(filePath) {
 
 // Function to replace placeholders in a Word document
 function replacePlaceholders(templatePath, outputPath, clientData) {
-    const content = fs.readFileSync(templatePath, 'binary');
+    const content = readFileSync(templatePath, { encoding: "binary" });
     const zip = new PizZip(content);
     const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
@@ -52,31 +49,30 @@ function replacePlaceholders(templatePath, outputPath, clientData) {
     try {
         doc.render();
     } catch (error) {
-        console.error('Error rendering document:', error);
+        console.error("Error rendering document:", error);
         return;
     }
 
-    const buffer = doc.getZip().generate({ type: 'nodebuffer' });
-    fs.writeFileSync(outputPath, buffer);
+    const buffer = doc.getZip().generate({ type: "uint8array" });
+    writeFileSync(outputPath, buffer);
 }
 
 // Main execution
-(function main() {
-    const excelFile = path.resolve(__dirname, 'data.xlsx'); // Relative path to Excel file
-    const wordTemplate = path.resolve(__dirname, 'template.docx'); // Relative path to Word template
+(async function main() {
+    const __dirname = dirname(new URL(import.meta.url).pathname);
+    const excelFile = resolve(__dirname, "data.xlsx"); // Relative path to Excel file
+    const wordTemplate = resolve(__dirname, "template.docx"); // Relative path to Word template
 
     // Ensure the invoices directory exists
-    const invoicesDir = path.resolve(__dirname, 'invoices');
-    if (!fs.existsSync(invoicesDir)) {
-        fs.mkdirSync(invoicesDir);
-    }
+    const invoicesDir = resolve(__dirname, "invoices");
+    ensureDirSync(invoicesDir);
 
     // Read data from the Excel file
     const clients = readExcel(excelFile);
 
     // Generate a document for each client
     clients.forEach((client) => {
-        const outputFilePath = path.resolve(invoicesDir, `${client['((Client Name))'] || 'Client'}.docx`); // Use the placeholder value for client name
+        const outputFilePath = resolve(invoicesDir, `${client['((Client Name))'] || 'Client'}.docx`); // Use the placeholder value for client name
         replacePlaceholders(wordTemplate, outputFilePath, client);
         console.log(`Generated document for client: ${outputFilePath}`);
     });
