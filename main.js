@@ -3,6 +3,7 @@
 // npm install xlsx docxtemplater pizzip fs
 
 const fs = require('fs');
+const path = require('path');
 const XLSX = require('xlsx');
 const PizZip = require('pizzip');
 const Docxtemplater = require('docxtemplater');
@@ -61,15 +62,21 @@ function replacePlaceholders(templatePath, outputPath, clientData) {
 
 // Main execution
 (function main() {
-    const excelFile = 'data.xlsx'; // Path to Excel file
-    const wordTemplate = 'template.docx'; // Path to Word template
+    const excelFile = path.resolve(__dirname, 'data.xlsx'); // Relative path to Excel file
+    const wordTemplate = path.resolve(__dirname, 'template.docx'); // Relative path to Word template
+
+    // Ensure the invoices directory exists
+    const invoicesDir = path.resolve(__dirname, 'invoices');
+    if (!fs.existsSync(invoicesDir)) {
+        fs.mkdirSync(invoicesDir);
+    }
 
     // Read data from the Excel file
     const clients = readExcel(excelFile);
 
     // Generate a document for each client
     clients.forEach((client) => {
-        const outputFilePath = `${client['{{ClientName}}'] || 'Client'}.docx`; // Use the placeholder value for client name
+        const outputFilePath = path.resolve(invoicesDir, `${client['{{ClientName}}'] || 'Client'}.docx`); // Use the placeholder value for client name
         replacePlaceholders(wordTemplate, outputFilePath, client);
         console.log(`Generated document for client: ${outputFilePath}`);
     });
