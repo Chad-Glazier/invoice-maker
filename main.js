@@ -21,7 +21,7 @@ function readExcel(filePath) {
     const firstRow = data[0];
     for (let i = 0; i < firstRow.length; i++) {
         if (firstRow[i] === '' || firstRow[i] === undefined) break;
-        placeholders.push(firstRow[i]);
+        placeholders.push(`((${firstRow[i]}))`); // Wrap placeholders with (( ))
     }
 
     // Extract client data from subsequent rows
@@ -76,7 +76,7 @@ function replacePlaceholders(templatePath, outputPath, clientData) {
 
     // Generate a document for each client
     clients.forEach((client) => {
-        const outputFilePath = path.resolve(invoicesDir, `${client['{{ClientName}}'] || 'Client'}.docx`); // Use the placeholder value for client name
+        const outputFilePath = path.resolve(invoicesDir, `${client['((Client Name))'] || 'Client'}.docx`); // Use the placeholder value for client name
         replacePlaceholders(wordTemplate, outputFilePath, client);
         console.log(`Generated document for client: ${outputFilePath}`);
     });
