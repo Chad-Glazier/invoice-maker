@@ -5,6 +5,7 @@
     "jsr:@std/fs@^1.0.8": "1.0.8",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@tinkie101/exceljs-wrapper@*": "1.0.2",
     "jsr:@tinkie101/exceljs-wrapper@^1.0.2": "1.0.2",
     "npm:@types/node@*": "22.5.4",
     "npm:exceljs@^4.4.0": "4.4.0"

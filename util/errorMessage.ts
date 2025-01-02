@@ -9,7 +9,7 @@ async function errorMessage() {
 	}
 	for (let i = 0; i < 10; i++) {
 		console.log("🚨🚨🚨 DUMBASS DETECTED 🚨🚨🚨")
-		await sleep(500)
+		await sleep(400)
 	}
 	console.log("ERROR 69420: excess of dumbassery")
 	await sleep(500)
