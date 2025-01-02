@@ -1,12 +1,11 @@
-import * as exceljs_wrapper from "@tinkie101/exceljs-wrapper"
-import * as docxml from "https://deno.land/x/docxml@5.15.3/mod.ts"
+import readExcel from "./util/readExcel.ts"
 
 async function generateInvoice(
 	template: string,
 	data: string
 ) {
 	// gotta write this lol
-	console.log("all g")
+	console.log(await readExcel("data/data_1.xlsx"))
 }
 
 generateInvoice("", "")
