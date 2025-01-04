@@ -1,4 +1,4 @@
-import readExcel from "./util/readExcel1.ts"
+import readExcel from "./util/readExcel.ts"
 
 
 async function generateInvoice(
