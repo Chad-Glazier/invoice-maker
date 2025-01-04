@@ -1,4 +1,4 @@
-import readExcel from "./util/readExcel.ts"
+import readExcel1 from "./util/readExcel1.ts"
 
 
 async function generateInvoice(
@@ -6,7 +6,7 @@ async function generateInvoice(
 	data: string
 ) {
 	// gotta write this lol
-	console.log(await readExcel("data/data_1.xlsx"))
+	console.log(await readExcel1("data/data_1.xlsx"))
 }
 
 generateInvoice("", "")

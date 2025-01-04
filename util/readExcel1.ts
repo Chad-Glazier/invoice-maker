@@ -12,7 +12,6 @@ async function readExcel1(filename: string) {
 
     const map: Map<string, Map<string, string>> = new Map();
 
-    
     const headers: string[] = [];
     const headerRow = workbook.getWorksheet(1)!.getRow(1).values as Array<string>;
     for (const header of headerRow) {
@@ -23,26 +22,33 @@ async function readExcel1(filename: string) {
 
     console.log("Headers:", headers);
 
-    
     const worksheet = workbook.getWorksheet(1);
+
+    const getCellValue = (cell: any): string => {
+        if (cell.formula) {
+            
+            return cell.result ? cell.result.toString() : "";
+        }
+        return cell.value ? cell.value.toString() : "";
+    };
+
     worksheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return;
 
-        const clientName = row.getCell(1).value;
+        const clientNameCell = row.getCell(1);
+        const clientName = getCellValue(clientNameCell);
         if (!clientName) return;
 
         const clientData = new Map<string, string>();
         headers.forEach((header, colIndex) => {
-            const cellValue = row.getCell(colIndex + 1).value;
-            clientData.set(header, cellValue ? cellValue.toString() : "");
+            const cell = row.getCell(colIndex + 1);
+            clientData.set(header, getCellValue(cell));
         });
 
-        map.set(clientName.toString(), clientData);
+        map.set(clientName, clientData);
     });
 
     return map;
 }
 
 export default readExcel1;
-
-// returns map with [object object] where formulas are in the excel file
