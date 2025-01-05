@@ -20,9 +20,11 @@ async function readExcel(filename: string): Promise<null |  Invoice[]> {
 		console.error(`${filename} exists, but no worksheet was found in it.`)
 		return null
 	}
-		
+	
+	// this will store the output
 	const invoices: Invoice[] = []
 
+	// collect headers so that we can associate each cell's value with a key.
 	const headers: string[] = []
 	for (const header of worksheet.getRow(1).values as Iterable<unknown>) {
 		if (header == undefined) continue
@@ -32,6 +34,7 @@ async function readExcel(filename: string): Promise<null |  Invoice[]> {
 		console.error(`${filename} should have headers in its first row.`)
 	}
 
+	// iterate over the rows to build out invoice objects.
 	workbook.getWorksheet(1)!.eachRow((row, rowNum) => {
 		if (rowNum == 1) return // skip the header row
 		const invoice = new Invoice()
