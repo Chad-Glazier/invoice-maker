@@ -1,33 +1,48 @@
 import Excel from "@tinkie101/exceljs-wrapper"
+import Invoice from "./Invoice.ts";
 
-async function readExcel(filename: string) {
+/**
+ * Used to read an Excel spreadsheet for invoice data. The following is expected:
+ * - The first row of the worksheet represents the headers.
+ * - The first column of each row (except the header row) contains the client's name.
+ */
+async function readExcel(filename: string): Promise<null |  Invoice[]> {
+	// validate input, get worksheet.
 	const workbook = new Excel.Workbook();
-
 	try {
-		await workbook.xlsx.readFile(filename);
+		await workbook.xlsx.readFile(filename)
 	} catch {
-		console.error("poopity scoop (the excel file does not exist)")
+		console.error(`${filename} does not exist.`)
+		return null
 	}
-	
-	const map: Map<string, Map<string, string>> = new Map()
+	const worksheet = workbook.getWorksheet(1)
+	if (worksheet === undefined) {
+		console.error(`${filename} exists, but no worksheet was found in it.`)
+		return null
+	}
+		
+	const invoices: Invoice[] = []
 
 	const headers: string[] = []
-	for (let header of workbook.getWorksheet(1)!.getRow(1).values as Iterable<any>) {
+	for (const header of worksheet.getRow(1).values as Iterable<unknown>) {
 		if (header == undefined) continue
-		headers.push(header)
+		headers.push(header.toString())
+	}
+	if (headers.length == 0) {
+		console.error(`${filename} should have headers in its first row.`)
 	}
 
-	console.log(headers)
+	workbook.getWorksheet(1)!.eachRow((row, rowNum) => {
+		if (rowNum == 1) return // skip the header row
+		const invoice = new Invoice()
+		row.eachCell((cell, colNum) => {
+			if (cell.value == undefined) return // skip empty cells
+			invoice.set(headers[colNum - 1], cell)
+		})
+		invoices.push(invoice)
+	});
 
-	const clients: string[] = []
-	for (let client of workbook.getWorksheet(1)!.getColumn(1).values.slice(2) as Iterable<any>) {
-		if (client == undefined) continue
-		clients.push(client)
-	}
-
-	console.log(clients)
-
-	// not done
+	return invoices
 }
 
 export default readExcel

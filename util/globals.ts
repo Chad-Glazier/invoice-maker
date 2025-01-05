@@ -1,0 +1,1 @@
+export const GST = 0.05

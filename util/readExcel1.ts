@@ -22,7 +22,7 @@ async function readExcel1(filename: string) {
 
     console.log("Headers:", headers);
 
-    const worksheet = workbook.getWorksheet(1);
+    const worksheet = workbook.getWorksheet(1)!;
 
     const getCellValue = (cell: any): string => {
         if (cell.formula) {
