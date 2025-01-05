@@ -1,7 +1,7 @@
 To run the code, run
 
 ```ps
-deno run main.ts
+deno run start
 ```
 
 in PowerShell.

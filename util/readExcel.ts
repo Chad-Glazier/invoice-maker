@@ -6,19 +6,17 @@ import Invoice from "./Invoice.ts";
  * - The first row of the worksheet represents the headers.
  * - The first column of each row (except the header row) contains the client's name.
  */
-async function readExcel(filename: string): Promise<null |  Invoice[]> {
+async function readExcel(filename: string): Promise<Invoice[]> {
 	// validate input, get worksheet.
 	const workbook = new Excel.Workbook();
 	try {
 		await workbook.xlsx.readFile(filename)
 	} catch {
-		console.error(`${filename} does not exist.`)
-		return null
+		throw new Error(`${filename} does not exist.`)
 	}
 	const worksheet = workbook.getWorksheet(1)
 	if (worksheet === undefined) {
-		console.error(`${filename} exists, but no worksheet was found in it.`)
-		return null
+		throw new Error(`${filename} exists, but no worksheet was found in it.`)
 	}
 	
 	// this will store the output
@@ -31,7 +29,7 @@ async function readExcel(filename: string): Promise<null |  Invoice[]> {
 		headers.push(header.toString())
 	}
 	if (headers.length == 0) {
-		console.error(`${filename} should have headers in its first row.`)
+		throw new Error(`${filename} should have headers in its first row.`)
 	}
 
 	// iterate over the rows to build out invoice objects.

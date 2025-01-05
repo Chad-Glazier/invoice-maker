@@ -5,8 +5,9 @@ async function generateInvoice(
 	template: string,
 	data: string
 ) {
-	// gotta write this lol
-	console.log(await readExcel("data/data_1.xlsx"))
+	const invoices = await readExcel(data)
+
+	console.log(invoices)
 }
 
-generateInvoice("", "")
+generateInvoice("", "data/data_1.xlsx")

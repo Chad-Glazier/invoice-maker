@@ -73,6 +73,14 @@ class Invoice {
 		return this.subtotal + this.gst
 	}
 
+	/**
+	 * Will attempt to match the header to one of the known properties of an
+	 * invoice. If no matching property is found, the unknown header will be
+	 * logged to the console.
+	 * 
+	 * @param header the string representing the header for the cell's column.
+	 * @param cell the cell holding the associated value.
+	 */
 	set(header: string, cell: Excel.Cell) {
 		if (similar(header, "client")) {
 			this.client = requireString(header, cell, false)!
